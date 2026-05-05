@@ -9,12 +9,12 @@ SECOP II**.
 
 ## Marlon Naranjo — Capitán
 
-- **Rol único en la hackathon:** Capitán de equipo. Arquitecto del
+- **Rol en la hackathon:** Capitán de equipo. Arquitecto del
   patrón **MNC AgentOS** del que GobIA Auditor es una vertical más.
   Lidera la integración entre componentes y la presentación al jurado.
 - **Nivel:** Senior.
 - **Credenciales y productos en producción:**
-  - Fundador y CEO de **MNC Consultoría**
+  - Fundador y CEO de **MNaranjo Consultoría**
     (https://mnconsultoria.org/).
   - Autor del monorepo MNC AgentOS (engine-core MIT, verticales
     propietarios) — `/home/thinkpad/projects/mnc-agentos/`.
@@ -27,7 +27,7 @@ SECOP II**.
 
 ## Gustavo Puerta — Dominio jurídico-contractual
 
-- **Rol único en la hackathon:** referente jurídico del equipo.
+- **Rol en la hackathon:** referente jurídico del equipo.
   Define qué constituye **opacidad documental con relevancia legal**
   (vacíos en garantías, pólizas, modificaciones contractuales, firma
   digital de anexos). Aporta las señales OP-06, OP-07, OP-08 y OP-09.
@@ -44,12 +44,14 @@ SECOP II**.
 
 ## Jaime Cárdenas — Infraestructura
 
-- **Rol único en la hackathon:** responsable de despliegue, persistencia
+- **Rol en la hackathon:** responsable de despliegue, persistencia
   y operación del agente. Asegura que el stack (Qdrant + Postgres +
   FastAPI + Ollama local) corre reproducible en demo y en producción
   ante jurado.
 - **Nivel:** Senior.
 - **Credenciales:**
+  - Fundador y CEO de **IT Integradores**
+  https://itintegradores.com/)
   - Linux administrator y arquitecto Kubernetes en producción.
   - Experiencia en Veeam (backups corporativos) y Ansible
     (automatización de infraestructura).
@@ -61,7 +63,7 @@ SECOP II**.
 
 ## Jaime Páez — Investigación, ML y análisis de datos
 
-- **Rol único en la hackathon:** diseñador de las señales estadísticas
+- **Rol en la hackathon:** diseñador de las señales estadísticas
   (OP-01 a OP-05, OP-10 a OP-12) y validador cuantitativo. Responsable
   de la metodología de medición y de evitar falsos positivos.
 - **Nivel:** Senior.
