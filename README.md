@@ -169,6 +169,32 @@ docker compose run --rm app python -m src.main ingest
 
 ---
 
+## Modelo open-core
+
+Este engine es **MIT y permanece MIT**. Cualquiera puede:
+- Auto-hospedar para uso personal o comercial
+- Forkearlo, modificarlo, redistribuirlo
+- Construir verticales propios encima sin pagar nada a MNC
+
+**Lo que MNC vende (no está aquí):**
+- Verticales propietarios (AbiChat, Workoholic, FundingRadar) — código cerrado
+- Hosting gestionado para clientes que no quieren operar infra
+- Soporte humano, integraciones premium (WhatsApp Business API oficial,
+  cámaras, wearables), paneles de administración, white-label institucional
+- Datasets curados (ej. español colombiano de adulto mayor) bajo
+  licencias separadas con consentimiento explícito de aportantes
+
+**Compromiso explícito:**
+- El engine MIT nunca se "downgradea" a closed-source. Si MNC desaparece,
+  el engine sigue siendo libre (CC0 sería redundante con MIT).
+- No se inyectan dependencias propietarias ocultas. Todas las deps son OSS.
+- Las features que la comunidad contribuya al engine no se mueven a
+  versión paga. Lo paga vive en repos privados separados, nunca en este.
+
+Ver `CONTRIBUTING.md` para cómo contribuir y qué se acepta.
+
+---
+
 ## Licencia
 
 MIT. Ver [`LICENSE`](LICENSE).
