@@ -68,7 +68,7 @@ SECOP II**.
 - **Credenciales:**
   - **Investigador Senior reconocido por Minciencias.**
     Consultar CVlaC del titular en
-    https://scienti.minciencias.gov.co/cvlac/Login/pre_s_login.do.
+    https://scienti.minciencias.gov.co/cvlac/visualizador/generarCurriculoCv.do?cod_rh=0000719587.
   - Miembro del grupo de investigación **VIRTUS** (categoría reconocida
     por Minciencias).
   - Productos digitales públicos y consultorías documentadas en
