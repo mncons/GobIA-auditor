@@ -1,0 +1,19 @@
+[project]
+name = "gobia-auditor"
+version = "0.1.0"
+description = "Agente de IA para detección de opacidad en contratos públicos sobre SECOP II"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [".venv", "data", "reports"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["E501"]  # line-length se valida con formatter, no con linter
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-q"
