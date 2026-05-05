@@ -20,8 +20,7 @@ SECOP II**.
     propietarios) — `/home/thinkpad/projects/mnc-agentos/`.
   - Patrón "monitor autónomo sobre datasets del Estado" iniciado con
     **FundingRadar** (Minciencias, iNNpulsa, SENA).
-- **Contacto de contribución:** `info@mnconsultoria.org` (email asociado
-  a los commits de este repo).
+- **Contacto de contribución:** mnaranjo@mnconsultoria.org.
 
 ---
 
@@ -38,7 +37,7 @@ SECOP II**.
     contratación pública.
   - Perfil profesional verificable en LinkedIn (a confirmar URL exacta
     con el titular antes de publicar).
-- **Contacto de contribución:** correo institucional MNC.
+- **Contacto de contribución:** gpuertas@mnconsultoria.org.
 
 ---
 
@@ -57,7 +56,7 @@ SECOP II**.
     (automatización de infraestructura).
   - Operador de los entornos sobre los que MNC AgentOS y sus verticales
     se despliegan.
-- **Contacto de contribución:** correo institucional MNC.
+- **Contacto de contribución:** jcardenas@mnconsultoria.org.
 
 ---
 
@@ -75,7 +74,7 @@ SECOP II**.
     por Minciencias).
   - Productos digitales públicos y consultorías documentadas en
     https://jptecnologia.com/ (sitio en producción del titular).
-- **Contacto de contribución:** correo institucional MNC, y los
+- **Contacto de contribución:** 	jpaez@mnconsultoria.org, y los
   enlaces verificables anteriores.
 
 ---
