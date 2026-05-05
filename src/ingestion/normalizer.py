@@ -91,10 +91,21 @@ def _build_source_url(raw: dict) -> str:
 
     Returns:
         URL en community.secop.gov.co o cadena vacía si no es derivable.
+
+    Notes:
+        TODO[ALTA]: la plantilla de URL es **convencional**, no verificada
+        contra el portal SECOP II en producción. Antes de publicar
+        cualquier reporte real, validar con el equipo (Gustavo) la
+        forma canónica del enlace al expediente público y reemplazar
+        aquí. La pregunta abierta vive en
+        docs/sprint-log-2026-05-04.md sección "Open questions".
     """
     contract_id = raw.get("id_contrato") or raw.get("referencia_contrato")
     if not contract_id:
         return ""
-    # WHY: la URL final se confirma contra el portal community.secop.gov.co
-    # en sprint posterior; aquí dejamos un placeholder citable.
+    # WHY: plantilla NO verificada. Si community.secop.gov.co cambió de
+    # esquema o el dataset jbjy-vk9h expone otro id distinto al
+    # ContractDetailView, esta URL apuntará a página no encontrada.
+    # Mantener el `cero hallazgos sin URL fuente` (CONSTITUTION §10)
+    # exige cerrar este TODO antes del demo público.
     return f"https://community.secop.gov.co/Public/Tendering/ContractDetailView/Index?contractId={contract_id}"

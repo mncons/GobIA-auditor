@@ -39,6 +39,14 @@ explicables.
 > avanza el sprint. Cada ítem que se termine se marca con `[x]` y se
 > referencia el commit que lo cerró.
 
+- [ ] **PRIORIDAD ALTA — Verificar URL canónica del expediente SECOP
+  II.** La plantilla actual en `_build_source_url` de
+  `src/ingestion/normalizer.py` es **convencional, no verificada**
+  contra el portal `community.secop.gov.co`. Marlon valida manualmente
+  con un `id_contrato` real y pasa la URL canónica para reemplazar.
+  Bloquea la publicación de cualquier reporte real (regla *cero
+  hallazgos sin URL fuente* del `CONSTITUTION.md` §10). Detalle en
+  *Open questions* más abajo.
 - [ ] Generar fixture sintético en `tests/fixtures/secop_sample.json`
   con 100–200 contratos cubriendo casos OP-01 (concentración) y OP-02
   (outlier de valor).
@@ -58,6 +66,7 @@ explicables.
   futuros.
 - [ ] Generar reporte de demo y review final con Gustavo (validación
   jurídica de la narrativa) antes del envío.
+- [ ] POst Hackaton: Si GobIA gana o queda finalista, crear página /proyectos/gobia-auditor en sitio MNC Astro con CTA a Odoo CRM.
 
 ## Decisions
 
