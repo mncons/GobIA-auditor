@@ -19,6 +19,7 @@
 | OP-10 | Repetición de objeto a mismo NIT      | media     |
 | OP-11 | Fragmentación bajo umbral de modalidad| alta      |
 | OP-12 | Sector vs. CIIU del contratista       | baja      |
+| OP-13 | HHI de mercado por entidad            | alta      |
 
 ---
 
@@ -202,3 +203,24 @@ testaferrato.
 **Fuente del dato.** Objeto contractual y CIIU del proveedor (RUES).
 
 **Severidad estimada.** Baja (alta tasa de falsos positivos esperada).
+
+---
+
+## OP-13 — HHI de mercado por entidad
+
+**Descripción.** Índice Herfindahl-Hirschman calculado como
+`Σ (share_i)²` donde `share_i` es la fracción del valor adjudicado
+total de la entidad capturada por el proveedor *i*. Threshold default
+**0.25** (convención DOJ U.S. para "highly concentrated market").
+
+**Hipótesis.** Complementa OP-01 (top-share por número de contratos)
+con la perspectiva de **valor**: una entidad puede repartir
+**número** de contratos a varios proveedores pero concentrar el
+**dinero** en uno. HHI captura esa dinámica.
+
+**Fuente del dato.** `valor_del_contrato`, `nit_del_proveedor_adjudicado`,
+`nombre_entidad`. Se evalúan lotes con ≥3 contratos por entidad.
+
+**Severidad estimada.** Alta. *Función pura:* `hhi_concentration` en
+`src/detection/rules.py`. *Inspiración:* OCDS Red Flags Guide §3.2,
+Klemperer (2002), DOJ Horizontal Merger Guidelines.
