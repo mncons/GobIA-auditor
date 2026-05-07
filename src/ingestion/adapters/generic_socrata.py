@@ -43,6 +43,7 @@ class GenericSocrataAdapter(BaseAdapter):
         self,
         dataset_url: str,
         field_mapping: dict[str, str],
+        client: SecopClient | None = None,
     ) -> None:
         missing = [k for k in REQUIRED_KEYS if k not in field_mapping]
         if missing:
@@ -52,13 +53,14 @@ class GenericSocrataAdapter(BaseAdapter):
             )
         self.dataset_url = dataset_url
         self.field_mapping = field_mapping
+        self._client = client
 
     async def fetch(
         self,
         filters: dict[str, Any],
         limit: int = 1000,
     ) -> AsyncIterator[dict[str, Any]]:
-        client = SecopClient(base_url=self.dataset_url)
+        client = self._client or SecopClient(base_url=self.dataset_url)
         async with client:
             async for item in client.search_contracts(filters, limit=limit):
                 yield item

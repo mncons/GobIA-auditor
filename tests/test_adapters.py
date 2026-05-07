@@ -80,7 +80,8 @@ async def test_generic_socrata_aplica_field_mapping(httpx_mock, cache) -> None:
         "date": "fecha_firma",
         "modality": "tipo_negociacion",
     }
-    adapter = GenericSocrataAdapter(ENERGY_DATASET, mapping)
+    client = SecopClient(base_url=ENERGY_DATASET, cache=cache)
+    adapter = GenericSocrataAdapter(ENERGY_DATASET, mapping, client=client)
     items = [item async for item in adapter.fetch({}, limit=10)]
     contract = adapter.normalize(items[0])
 
