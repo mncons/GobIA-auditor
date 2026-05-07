@@ -32,6 +32,14 @@ class Settings(BaseSettings):
     secop_api_base: str = Field(
         default="https://www.datos.gov.co/resource/jbjy-vk9h.json"
     )
+    offline_mode: bool = Field(
+        default=False,
+        description=(
+            "Si True (env OFFLINE_MODE=1), el llm_router NO consulta "
+            "Anthropic y va directo a Ollama local. Útil para demo D2 "
+            "del jurado y para entornos sin acceso a API externas."
+        ),
+    )
 
 
 def get_settings() -> Settings:
