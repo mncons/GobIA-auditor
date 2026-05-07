@@ -123,9 +123,10 @@ gobia-auditor/
 ├── src/
 │   ├── config.py
 │   ├── main.py
+│   ├── api/                # FastAPI: /healthz + /contest (ADR-008)
 │   ├── ingestion/
 │   ├── detection/
-│   ├── storage/
+│   ├── storage/            # qdrant_store + contest_store (SQLite)
 │   └── reporting/
 ├── tests/
 │   ├── test_smoke.py
@@ -166,6 +167,36 @@ docker compose run --rm app python -m src.main ingest
 > el routing efectivo del LLM son stubs documentados; las dos reglas
 > estadísticas (concentración por proveedor e IQR de valor) sí son reales.
 > Ver `docs/sprint-log-2026-05-04.md` para el plan overnight.
+
+---
+
+## API HTTP — endpoints disponibles
+
+```bash
+uvicorn src.api.main:app --port 8000
+```
+
+- `GET /healthz` — liveness check.
+- `POST /contest` — registra una **impugnación** sobre un hallazgo
+  (Pack 4 Responsiveness del 6-Pack of Care, Tang & Green Oxford 2025;
+  ver ADR-008). El sistema **no modifica** el score automáticamente:
+  un revisor humano resuelve cada caso en máximo 7 días hábiles
+  (CONSTITUTION §10).
+- `GET /contest/{id}` y `GET /contest?contract_id=...` — consulta de
+  impugnaciones existentes.
+
+Ejemplo:
+
+```bash
+curl -X POST localhost:8000/contest \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "contract_id": "CO1.PCCNTR.123456",
+        "reason": "El score parece inflado por outlier sectorial sin contexto.",
+        "contestant_email": "vee@dor.org",
+        "contestant_role": "veedor"
+      }'
+```
 
 ---
 

@@ -13,6 +13,8 @@ from decimal import Decimal
 def test_imports_basicos() -> None:
     """Verifica que los módulos del paquete cargan sin efectos colaterales."""
     import src  # noqa: F401
+    import src.api.contest  # noqa: F401
+    import src.api.main  # noqa: F401
     import src.config  # noqa: F401
     import src.detection.llm_router  # noqa: F401
     import src.detection.rules  # noqa: F401
@@ -20,6 +22,7 @@ def test_imports_basicos() -> None:
     import src.ingestion.secop_client  # noqa: F401
     import src.main  # noqa: F401
     import src.reporting.report  # noqa: F401
+    import src.storage.contest_store  # noqa: F401
     import src.storage.qdrant_store  # noqa: F401
 
 
