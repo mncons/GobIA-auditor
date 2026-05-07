@@ -84,7 +84,7 @@ def _parse_date(value: str | None) -> date | None:
 
 
 def _build_source_url(raw: dict) -> str:
-    """Construye la URL pública del contrato cuando es derivable.
+    """Construye la URL pública del contrato.
 
     Args:
         raw: Dict crudo de Socrata.
@@ -93,19 +93,24 @@ def _build_source_url(raw: dict) -> str:
         URL en community.secop.gov.co o cadena vacía si no es derivable.
 
     Notes:
-        TODO[ALTA]: la plantilla de URL es **convencional**, no verificada
-        contra el portal SECOP II en producción. Antes de publicar
-        cualquier reporte real, validar con el equipo (Gustavo) la
-        forma canónica del enlace al expediente público y reemplazar
-        aquí. La pregunta abierta vive en
-        docs/sprint-log-2026-05-04.md sección "Open questions".
+        Estrategia validada el 2026-05-07 contra `jbjy-vk9h`:
+        el dataset Socrata YA expone la URL canónica del expediente
+        en `raw["urlproceso"]["url"]` apuntando a
+        `community.secop.gov.co/Public/Tendering/OpportunityDetail/Index?noticeUID=...`.
+        Se prefiere ese valor. Si falta, se construye desde
+        `proceso_de_compra` como aproximación; si tampoco existe se
+        retorna cadena vacía y el llamador filtra el contrato
+        (CONSTITUTION §10: cero hallazgos sin URL fuente).
     """
-    contract_id = raw.get("id_contrato") or raw.get("referencia_contrato")
-    if not contract_id:
-        return ""
-    # WHY: plantilla NO verificada. Si community.secop.gov.co cambió de
-    # esquema o el dataset jbjy-vk9h expone otro id distinto al
-    # ContractDetailView, esta URL apuntará a página no encontrada.
-    # Mantener el `cero hallazgos sin URL fuente` (CONSTITUTION §10)
-    # exige cerrar este TODO antes del demo público.
-    return f"https://community.secop.gov.co/Public/Tendering/ContractDetailView/Index?contractId={contract_id}"
+    urlproceso = raw.get("urlproceso")
+    if isinstance(urlproceso, dict):
+        url = urlproceso.get("url")
+        if isinstance(url, str) and url.startswith("https://community.secop.gov.co/"):
+            return url
+    proceso = raw.get("proceso_de_compra")
+    if proceso:
+        return (
+            "https://community.secop.gov.co/Public/Tendering/"
+            f"OpportunityDetail/Index?noticeUID={proceso}"
+        )
+    return ""
