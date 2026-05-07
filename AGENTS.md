@@ -25,8 +25,9 @@ Pipeline lineal: `SECOP II → Ingestor → Normalizador → Memory Store
 (Qdrant) → Detection Engine (reglas + LLM Router) → Reporter`.
 
 Detalle completo en [`docs/architecture.md`](docs/architecture.md). Las
-ADRs vigentes son ADR-001 a ADR-004 (Qdrant, Claude+Ollama, reglas+LLM,
-FastAPI).
+ADRs vigentes son ADR-001..004 (Qdrant, Claude+Ollama, reglas+LLM,
+FastAPI), ADR-007 (combinación lineal regla+LLM), ADR-008 (`/contest`,
+Pack 4 Responsiveness) y ADR-009 (Streamlit dashboard no-decisorio).
 
 Este repo hereda el patrón de agentes del monorepo MNC AgentOS:
 `/home/thinkpad/projects/mnc-agentos/packages/engine-core/`. La
@@ -96,8 +97,11 @@ datasets del Estado" después de FundingRadar (Minciencias, iNNpulsa, SENA).
 6. **No tocar `.env`**. Usar `.env.example` como referencia.
 7. **No hacer `git push`** sin autorización explícita. Las ramas
    permanecen locales hasta recibir credenciales del repo público.
-8. **No frontend** (Next.js, Tailwind, React) en este vertical: scope
-   declarado es backend + CLI + reporte Markdown.
+8. **No SPA frontend** (Next.js, Tailwind, React) en este vertical.
+   Sí se permite **un único dashboard de auditoría no-decisorio**
+   (`streamlit_app.py`) que solo consulta y ofrece form de impugnación
+   `POST /contest`; ningún UI puede modificar el score automáticamente.
+   Ver ADR-009.
 
 ---
 

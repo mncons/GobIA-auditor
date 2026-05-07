@@ -189,6 +189,92 @@ automáticamente para auditores externos.
 
 ---
 
+### ADR-007 — Combinación lineal regla + LLM, sin pesos aprendidos
+
+**Contexto.** El `score` de opacidad surge de mezclar señales
+determinísticas (reglas) y un ajuste cualitativo del LLM. Hay dos
+caminos: pesos aprendidos sobre un dataset etiquetado, o pesos fijos
+declarados.
+
+**Decisión.** **Combinación lineal con pesos fijos**:
+`score = 0.7 · rule_score + 0.3 · llm_severity_avg`. Cada componente
+es trazable por separado en el `OpacityScore.rationale`.
+
+**Alternativas.** Modelos aprendidos (XGBoost, regresión logística)
+darían mejor calibración estadística pero requieren etiquetas (¿qué
+veedor las produce?), introducen riesgo de data leakage y no son
+defendibles ante un jurado o ente de control sin un dataset público
+auditado. La auditabilidad cuantitativa pesa más que la calibración.
+
+**Consecuencias.** Si en una sesión Anthropic está caído y el fallback
+Ollama también, el motor entrega `rule_score` puro y marca
+`llm_severity_avg = None` con `model_used = "rules-only"`. La cita
+legal del rationale no depende del LLM.
+
+---
+
+### ADR-008 — Endpoint `/contest` (Pack 4 Responsiveness, 6-Pack of Care)
+
+**Contexto.** El 6-Pack of Care (Tang & Green, Oxford 2025) define
+seis dimensiones para sistemas IA de impacto público; el Pack 4
+Responsiveness exige un canal explícito por el cual la persona
+auditada (contratista, entidad, ciudadanía) pueda objetar la decisión
+del sistema. Sin este canal el agente queda como caja negra, lo que
+contradice CONSTITUTION §10 (revisión humana obligatoria) y la
+regla "no acusar corrupción".
+
+**Decisión.** Exponer un endpoint `POST /contest` que recibe
+`{contract_id, reason, contestant_email, contestant_role}` y persiste
+la impugnación en SQLite. **El endpoint NO modifica automáticamente
+el score**: deja la impugnación en estado `received` con un SLA
+declarado de 7 días, durante los cuales un revisor humano (Marlon o
+Gustavo) decide `resolved_kept` o `resolved_changed` y registra
+`resolution_notes`.
+
+**Alternativas.** (a) Sin canal de impugnación → falla Pack 4.
+(b) Score auto-decrece con cada impugnación → vector de gaming
+trivial. (c) Buzón externo (form Google) → no auditable, no integrado
+al flujo de auditoría.
+
+**Consecuencias.** Se introduce el primer servicio HTTP en el repo
+(`src/api/`), que abre puerta a futuros endpoints (`/scores`,
+`/explain`). Retención SQLite local 90 días con anonimato opcional
+(role `citizen` puede dejar email vacío). El acuse de recibo cita
+explícitamente la frase "este sistema no decide; un humano revisa
+toda impugnación en máximo 7 días hábiles".
+
+---
+
+### ADR-009 — Streamlit como dashboard de auditoría no-decisorio
+
+**Contexto.** El reto de Día 2 (8-9 may 2026, Hackathon Nacional
+Colombia 5.0) exige pitch de 5 min con demo en vivo. Un reporte
+Markdown estático no transmite el flujo interactivo del sistema. A
+la vez, AGENTS.md prohibía cualquier frontend para evitar deslizar
+el alcance hacia una "app de auditoría ciudadana" cuando lo que se
+entrega es un motor MIT.
+
+**Decisión.** Habilitar **un solo dashboard Streamlit
+(`streamlit_app.py`)** acotado a tres funciones: ver hallazgos sobre
+un `contract_id`, ver metadata del modelo usado (Anthropic/Ollama,
+latencia, costo), y ofrecer el form de impugnación que llama a
+`/contest`. **El dashboard nunca cambia el score; los inputs del
+usuario solo pueden consultar o impugnar.**
+
+**Alternativas.** (a) Sin dashboard → demo D2 más débil. (b) SPA
+React/Next → fuera del scope del entregable MIT, mantenimiento mayor,
+desalinea el patrón engine-core. (c) Notebook Jupyter → no
+demostrable a jurado no técnico.
+
+**Consecuencias.** Se actualiza AGENTS.md para reemplazar la
+prohibición genérica de "No frontend" por la regla más fina "ningún
+UI puede modificar score automáticamente; los dashboards son solo
+lectura + canales de impugnación". El dashboard reusa
+`RuleEngine.evaluate` directamente sin pasar por API, lo que mantiene
+el demo funcional aun si el servicio FastAPI está caído.
+
+---
+
 ## 5. Ámbitos fuera de alcance (explícitos)
 
 - **No** procesa documentos PDF anexos al contrato (fase posterior).
