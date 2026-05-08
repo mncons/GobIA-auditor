@@ -31,7 +31,8 @@ Pipeline lineal: `SECOP II → Ingestor → Normalizador → Memory Store
 Detalle completo en [`docs/architecture.md`](docs/architecture.md). Las
 ADRs vigentes son ADR-001..004 (Qdrant, Claude+Ollama, reglas+LLM,
 FastAPI), ADR-007 (combinación lineal regla+LLM), ADR-008 (`/contest`,
-Pack 4 Responsiveness) y ADR-009 (Streamlit dashboard no-decisorio).
+Pack 4 Responsiveness), ADR-009 (Streamlit dashboard no-decisorio) y
+ADR-010 (haiku/opus dual + qwen3:1.7b offline endurecido).
 
 Este repo hereda el patrón de agentes del monorepo MNC AgentOS:
 `/home/thinkpad/projects/mnc-agentos/packages/engine-core/`. La
