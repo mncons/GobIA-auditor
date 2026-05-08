@@ -4,7 +4,8 @@ Estrategia:
 - Primario: Anthropic ``claude-haiku-4-5-20251001`` (costo-eficiente
   para análisis masivo). El modelo Opus se reserva para razonamiento
   jurídico explícito invocado a mano.
-- Fallback automático a Ollama ``qwen3:8b`` si:
+- Fallback automático a Ollama ``qwen3:1.7b`` con payload endurecido
+  (thinking OFF, keep_alive 30m, num_predict 120, temperature 0.3) si:
   - ``OFFLINE_MODE=1`` en env / settings,
   - ``ANTHROPIC_API_KEY`` ausente o vacía,
   - timeout (>6s) en la llamada Anthropic,
@@ -39,9 +40,17 @@ from src.ingestion.normalizer import Contract
 logger = logging.getLogger(__name__)
 
 DEFAULT_ANTHROPIC_MODEL = "claude-haiku-4-5-20251001"
-DEFAULT_OLLAMA_MODEL = "qwen3:8b"
+DEFAULT_OLLAMA_MODEL = "qwen3:1.7b"
 ANTHROPIC_TIMEOUT_S = 6.0
 OLLAMA_TIMEOUT_S = 60.0
+OLLAMA_KEEP_ALIVE = "30m"
+OLLAMA_THINK = False
+# WHY: 120 tokens deja margen para "0.55 + breve rationale" sin permitir
+# que el modelo se extienda; T=0.3 evita repetition-loops del 1.7B sin
+# perder determinismo útil (NLM "Modelos de Lenguaje Pequeños": T 0.0-0.20
+# ideal, thinking OFF para scoring).
+OLLAMA_NUM_PREDICT = 120
+OLLAMA_TEMPERATURE = 0.3
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 
 # USD por 1M tokens (input, output) — claude-haiku-4-5 pricing 2026.
@@ -132,8 +141,6 @@ async def route(
         return await _call_ollama(
             prompt,
             base_url=settings.ollama_base_url,
-            max_tokens=max_tokens,
-            temperature=temperature,
             fallback_reason=fallback_reason,
             task_type=task_type,
         )
@@ -198,20 +205,23 @@ async def _call_ollama(
     prompt: str,
     *,
     base_url: str,
-    max_tokens: int,
-    temperature: float,
     fallback_reason: str | None,
     task_type: str,
 ) -> dict[str, Any]:
+    # WHY: payload Ollama no acepta los args de generación del caller — el
+    # modelo local tiene su propio régimen (constantes OLLAMA_*) para que
+    # demo D2 corra <25s en T495 sin GPU.
     start = time.monotonic()
     payload = {
         "model": DEFAULT_OLLAMA_MODEL,
         "prompt": prompt,
         "options": {
-            "num_predict": max_tokens,
-            "temperature": temperature,
+            "num_predict": OLLAMA_NUM_PREDICT,
+            "temperature": OLLAMA_TEMPERATURE,
         },
         "stream": False,
+        "keep_alive": OLLAMA_KEEP_ALIVE,
+        "think": OLLAMA_THINK,
     }
     url = f"{base_url.rstrip('/')}/api/generate"
     async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT_S) as client:

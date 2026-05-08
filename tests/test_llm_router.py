@@ -6,6 +6,7 @@ llamadas a Anthropic y Ollama. Cero llamadas reales a Anthropic.
 
 from __future__ import annotations
 
+import json
 from datetime import date
 from decimal import Decimal
 
@@ -125,6 +126,29 @@ async def test_route_sin_key_va_directo_a_ollama(
     res = await route("eval")
     assert res["fallback_used"] is True
     assert res["fallback_reason"] == "ANTHROPIC_API_KEY ausente"
+
+
+@pytest.mark.asyncio
+async def test_ollama_payload_endurecido(httpx_mock, offline_mode) -> None:
+    """Valida que el payload Ollama lleva los 5 ajustes de demo D2.
+
+    pytest-httpx con add_response NO valida bodies por defecto. Sin este
+    test, mover think/keep_alive/num_predict adentro de options (donde
+    Ollama los ignora) no rompería ningún test.
+    """
+    httpx_mock.add_response(url=OLLAMA_GENERATE, json=_ollama_response())
+    await route("eval", max_tokens=999, temperature=0.99)
+    body = json.loads(httpx_mock.get_requests(url=OLLAMA_GENERATE)[0].content)
+    assert body["model"] == "qwen3:1.7b"
+    assert body["think"] is False
+    assert body["keep_alive"] == "30m"
+    assert body["stream"] is False
+    assert body["options"]["num_predict"] == 120
+    assert body["options"]["temperature"] == 0.3
+    # WHY: max_tokens/temperature del caller NO se filtran al payload Ollama.
+    assert "max_tokens" not in body["options"]
+    assert body["options"]["num_predict"] != 999
+    assert body["options"]["temperature"] != 0.99
 
 
 @pytest.mark.asyncio
