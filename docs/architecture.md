@@ -140,7 +140,7 @@ debe poder funcionar offline para demo de jurado y para soberanía técnica
 en entornos de la Veeduría sin acceso a API externas.
 
 **Decisión.** `claude-opus-4-7` como modelo principal vía Anthropic SDK,
-con fallback a `qwen3` vía Ollama local.
+con fallback a `qwen3:1.7b` vía Ollama local (payload endurecido — ver ADR-010).
 
 **Alternativas.** Sólo Claude (más simple, sin offline). Sólo local
 (latencia y calidad menores en razonamiento jurídico). Híbrido pierde
@@ -272,6 +272,38 @@ UI puede modificar score automáticamente; los dashboards son solo
 lectura + canales de impugnación". El dashboard reusa
 `RuleEngine.evaluate` directamente sin pasar por API, lo que mantiene
 el demo funcional aun si el servicio FastAPI está caído.
+
+---
+
+### ADR-010 — Modelo dual Anthropic (haiku batch, opus a mano) y qwen3:1.7b offline endurecido
+
+**Contexto.** Sprint-log 2026-05-07 dejó dos TODO[ALTA] vinculados:
+(1) `llm_router.py` usa `claude-haiku-4-5-20251001` por costo, pero
+CONSTITUTION declara `claude-opus-4-7` como modelo principal; (2)
+`qwen3:8b` con thinking ON corre a 8 tok/s en T495 sin GPU, latencia
+inviable para demo D2 del Hackathon Colombia 5.0.
+
+**Decisión.** (a) `claude-haiku-4-5-20251001` queda como **primario para
+análisis masivo** (≈1/5 del costo de Opus); `claude-opus-4-7` se reserva
+para razonamiento jurídico explícito invocado a mano, fuera del flujo
+batch. (b) Offline default = `qwen3:1.7b` con payload endurecido:
+`think=False`, `keep_alive="30m"`, `num_predict=120`, `temperature=0.3`,
+`stream=False`. Constantes en `src/detection/llm_router.py:OLLAMA_*`.
+
+**Alternativas.** Opus en batch (3-5× costo, fuera de presupuesto demo).
+qwen3:8b con thinking ON (latencia inviable, verificado 8 tok/s).
+qwen3:1.7b con thinking ON (output ruidoso para scoring numérico —
+confirmado por NLM "Modelos de Lenguaje Pequeños": para tareas básicas
+tipo scoring el modo thinking da peor rendimiento y consume más tiempo).
+
+**Consecuencias.** El primario Anthropic deja de coincidir con la letra
+de CONSTITUTION; cualquier reporte público debe leer el `model_used`
+real del `OpacityScore`, no el modelo declarado. La temperatura offline
+0.3 (no 0.0) rompe la simetría con ADR-007 §determinismo: justificado
+porque el 1.7B con T=0 cae en repetition-loops; los 0.3 de variabilidad
+son ruido acotado sobre un score ya mezclado 0.7·reglas + 0.3·LLM. El
+endpoint `/api/ps` confirma que `keep_alive=30m` mantiene el modelo
+caliente entre demos consecutivas.
 
 ---
 
