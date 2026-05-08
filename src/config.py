@@ -40,6 +40,47 @@ class Settings(BaseSettings):
             "del jurado y para entornos sin acceso a API externas."
         ),
     )
+    ollama_model: str = Field(
+        default="qwen3:1.7b",
+        description=(
+            "Modelo Ollama del fallback offline (ADR-010). Default "
+            "endurecido para T495 sin GPU. Override con env "
+            "OLLAMA_MODEL=qwen3:8b si hay GPU."
+        ),
+    )
+    ollama_keep_alive: str = Field(
+        default="30m",
+        description=(
+            "TTL del modelo cargado en memoria (ADR-010). Mantiene "
+            "caliente entre demos. Override OLLAMA_KEEP_ALIVE=-1 "
+            "para tener el modelo siempre cargado."
+        ),
+    )
+    ollama_think: bool = Field(
+        default=False,
+        description=(
+            "Modo thinking de qwen3 (ADR-010). OFF por default: "
+            "para scoring [0,1] el reasoning explícito agrega "
+            "latencia sin aportar calidad. Override "
+            "OLLAMA_THINK=1 para tareas complejas."
+        ),
+    )
+    ollama_num_predict: int = Field(
+        default=120,
+        description=(
+            "Tope de tokens en la respuesta Ollama (ADR-010). "
+            "Override OLLAMA_NUM_PREDICT=512 si el prompt requiere "
+            "rationale extendida."
+        ),
+    )
+    ollama_temperature: float = Field(
+        default=0.3,
+        description=(
+            "Temperatura del fallback Ollama (ADR-010). 0.3 evita "
+            "repetition-loops del 1.7B; bajar a 0.0 si el modelo "
+            "primario es más grande y determinístico."
+        ),
+    )
 
 
 def get_settings() -> Settings:

@@ -209,19 +209,23 @@ async def _call_ollama(
     task_type: str,
 ) -> dict[str, Any]:
     # WHY: payload Ollama no acepta los args de generación del caller — el
-    # modelo local tiene su propio régimen (constantes OLLAMA_*) para que
-    # demo D2 corra <25s en T495 sin GPU.
+    # modelo local tiene su propio régimen (Settings.ollama_*) para que
+    # demo D2 corra <25s en T495 sin GPU. Los defaults coinciden con las
+    # constantes OLLAMA_* del módulo (baseline documentado), pero env vars
+    # OLLAMA_MODEL / OLLAMA_NUM_PREDICT / OLLAMA_TEMPERATURE / OLLAMA_THINK
+    # / OLLAMA_KEEP_ALIVE permiten override sin recompilar.
+    s = get_settings()
     start = time.monotonic()
     payload = {
-        "model": DEFAULT_OLLAMA_MODEL,
+        "model": s.ollama_model,
         "prompt": prompt,
         "options": {
-            "num_predict": OLLAMA_NUM_PREDICT,
-            "temperature": OLLAMA_TEMPERATURE,
+            "num_predict": s.ollama_num_predict,
+            "temperature": s.ollama_temperature,
         },
         "stream": False,
-        "keep_alive": OLLAMA_KEEP_ALIVE,
-        "think": OLLAMA_THINK,
+        "keep_alive": s.ollama_keep_alive,
+        "think": s.ollama_think,
     }
     url = f"{base_url.rstrip('/')}/api/generate"
     async with httpx.AsyncClient(timeout=OLLAMA_TIMEOUT_S) as client:
@@ -234,7 +238,7 @@ async def _call_ollama(
     tokens_out = int(body.get("eval_count", 0) or 0)
     result: dict[str, Any] = {
         "output": body.get("response", "") or "",
-        "model_used": DEFAULT_OLLAMA_MODEL,
+        "model_used": s.ollama_model,
         "latency_ms": latency_ms,
         "tokens_in": tokens_in,
         "tokens_out": tokens_out,

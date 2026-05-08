@@ -129,6 +129,37 @@ async def test_route_sin_key_va_directo_a_ollama(
 
 
 @pytest.mark.asyncio
+async def test_ollama_payload_override_via_env(
+    httpx_mock, monkeypatch
+) -> None:
+    """Env vars OLLAMA_* deben sobreescribir los defaults sin recompilar.
+
+    Útil para demo D2: si hay GPU disponible, OLLAMA_MODEL=qwen3:8b +
+    OLLAMA_NUM_PREDICT=512 + OLLAMA_THINK=1 cambian el payload sin tocar
+    código. El model_used reportado debe reflejar el override real.
+    """
+    monkeypatch.setenv("OFFLINE_MODE", "1")
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-test")
+    monkeypatch.setenv("OLLAMA_BASE_URL", OLLAMA_BASE)
+    monkeypatch.setenv("OLLAMA_MODEL", "qwen3:8b")
+    monkeypatch.setenv("OLLAMA_NUM_PREDICT", "512")
+    monkeypatch.setenv("OLLAMA_TEMPERATURE", "0.7")
+    monkeypatch.setenv("OLLAMA_THINK", "1")
+    monkeypatch.setenv("OLLAMA_KEEP_ALIVE", "-1")
+
+    httpx_mock.add_response(url=OLLAMA_GENERATE, json=_ollama_response())
+    res = await route("eval")
+
+    body = json.loads(httpx_mock.get_requests(url=OLLAMA_GENERATE)[0].content)
+    assert body["model"] == "qwen3:8b"
+    assert body["think"] is True
+    assert body["keep_alive"] == "-1"
+    assert body["options"]["num_predict"] == 512
+    assert body["options"]["temperature"] == 0.7
+    assert res["model_used"] == "qwen3:8b"
+
+
+@pytest.mark.asyncio
 async def test_ollama_payload_endurecido(httpx_mock, offline_mode) -> None:
     """Valida que el payload Ollama lleva los 5 ajustes de demo D2.
 
