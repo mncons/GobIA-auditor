@@ -17,3 +17,6 @@ ignore = ["E501"]  # line-length se valida con formatter, no con linter
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-q"
+markers = [
+    "integration: smoke contra servicios reales (Ollama, etc.); skip si el servicio no responde",
+]
