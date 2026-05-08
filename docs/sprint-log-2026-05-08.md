@@ -35,17 +35,22 @@
 ## Tag de release
 
 `v0.3-offline-tuned` apunta a `ae1b8d0` (commit ADR-010), creado anotado
-con `git tag -a`. **No pusheado** — pendiente de autorización humana.
+con `git tag -a`. **Pusheado** a `mncons/GobIA-auditor` en post-cierre.
 
-## Commits (3 atómicos + cierre)
+## Commits (3 sesión + cierre + 2 post-cierre TODO[MEDIA])
 
 | SHA      | Tipo  | Resumen                                                                        |
 |----------|-------|--------------------------------------------------------------------------------|
 | 3339376  | fix   | router: qwen3:1.7b + think=false + keep_alive=30m + num_predict=120 + T=0.3   |
 | 496f394  | test  | integration: smoke offline qwen3:1.7b en T495 con skip-policy y xfail latency |
 | ae1b8d0  | docs  | architecture: ADR-002 actualizado + ADR-010 nuevo (haiku/opus dual + offline) |
+| 443e025  | chore | sprint-log cierre 2026-05-08                                                   |
+| 26ef25e  | docs  | agents: refresh policy + Apéndice A (53 cuadernos NLM) + Apéndice B           |
+| 768ee35  | docs  | agents: list ADR-010 in vigent ADRs (cierra TODO[MEDIA] #3)                   |
 
-(El cierre del sprint-log va como commit aparte tipo `chore`.)
+(Los dos últimos commits resuelven TODO[MEDIA] #3 y arrastran el
+refresh de AGENTS.md que el usuario tenía pendiente sin commitear,
+ambos pusheados al remote canónico `mncons/GobIA-auditor`.)
 
 ## Decisiones tomadas
 
@@ -85,21 +90,25 @@ con `git tag -a`. **No pusheado** — pendiente de autorización humana.
 
 ## Pendiente al cierre — TODOs
 
-### TODO[ALTA]
+### TODO[ALTA] — cerrados en post-cierre
 
-1. **`git push origin main --tags` cuando el usuario autorice.** AGENTS.md
-   §"MUST NOT" #7 prohíbe push sin autorización explícita. La rama queda
-   local con 4 commits no pusheados (3 fix/test/docs + 1 chore sprint-log
-   pendiente) y el tag `v0.3-offline-tuned` también local.
+1. ✅ **Push autorizado.** Usuario dio luz verde; `main` y
+   `v0.3-offline-tuned` arriba en `mncons/GobIA-auditor`. El primer
+   `git push` reveló un alias viejo del remote (`gobia-auditor`
+   lowercase) con redirect transparente desde GitHub; se actualizó a
+   `https://github.com/mncons/GobIA-auditor.git` y se persistió en
+   engram (topic `infra/git-remote`). Pushes posteriores limpios.
 
-### TODO[MEDIA]
+### TODO[MEDIA] — cerrados en post-cierre
 
-2. **Compound Engineering: cuaderno NotebookLM de cierre.** Apéndice B
-   AGENTS.md exige crear `gobia-auditor_2026-05-08_router-offline-tuning`
-   con el resumen de esta sesión como primera fuente. Pendiente al
-   ejecutar el prompt textual del Apéndice B en el chat del usuario.
-3. **Actualizar AGENTS.md líneas 32-34** para incluir ADR-010 en el
-   listado vigente. Quedó fuera del time-box; trivial (una línea).
+2. ✅ **Compound Engineering: cuaderno NotebookLM creado.** Cuaderno
+   `gobia-auditor_2026-05-08_router-offline-tuning`
+   (id `0028a921-9a5a-4b1f-b4a9-a086dc32a9f4`) con resumen de sesión
+   indexado como primera fuente.
+3. ✅ **AGENTS.md líneas 32-34 actualizado** con ADR-010 en el listado
+   vigente (commit `768ee35`). En el camino se commiteó también el
+   refresh de policy + Apéndice A 53 cuadernos NLM + Apéndice B
+   Compound Engineering que estaba pendiente desde antes (`26ef25e`).
 
 ### TODO[BAJA]
 
