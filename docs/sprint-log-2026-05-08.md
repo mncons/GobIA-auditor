@@ -112,9 +112,13 @@ ambos pusheados al remote canónico `mncons/GobIA-auditor`.)
 
 ### TODO[BAJA]
 
-4. **Considerar exponer `OLLAMA_*` como env vars** en `src/config.py` si
-   más adelante hace falta tunearlas sin recompilar (p.ej. demo en
-   máquina con GPU donde `qwen3:8b` sí es viable).
+4. ✅ **`OLLAMA_*` expuestos como env vars** en `src/config.py`
+   (commit `2f0dbce`). 5 fields nuevos con defaults idénticos a las
+   constantes módulo, `_call_ollama` lee de `get_settings()`. Permite
+   override sin recompilar para demo D2 con GPU. Test
+   `test_ollama_payload_override_via_env` cubre los 5 overrides.
+   Marcado fuera de corpus NLM (regla #6 AGENTS.md): operacionalización
+   de configuración, no decisión arquitectónica.
 5. **TODOs heredados del sprint 2026-05-07** que NO se atacaron hoy:
    OP-14 oferente único, `RuleEngine.evaluate_with_context`, parquet en
    `bulk_snapshot`, fixture sintético T-10, ADR-005 embeddings, ADR-006
